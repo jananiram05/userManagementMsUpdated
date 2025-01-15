@@ -23,6 +23,7 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter') {
 		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
 	}
+	implementation 'org.springframework.boot:spring-boot-starter-test'
 	// Exclude log4j-to-slf4j to avoid conflicts
 	configurations.all {
 		exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
@@ -43,7 +44,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
