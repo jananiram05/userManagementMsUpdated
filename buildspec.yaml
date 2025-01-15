@@ -3,32 +3,35 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - echo "Granting execute permissions to gradlew..."
+      - chmod +x gradlew
+      - echo "Cleaning and building the Gradle project..."
       - ./gradlew clean build # Clean and build the Gradle project
-      - echo Logging in to Amazon ECR...
+      - echo "Logging in to Amazon ECR..."
       - aws --version # Verify AWS CLI version
       - REPOSITORY_URI=248189902173.dkr.ecr.us-east-1.amazonaws.com/user-repo
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - echo "Generating commit hash and image tag..."
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7) # Extract short commit hash
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}') # Generate image tag from build ID
+
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
+      - echo "Build started on `date`"
+      - echo "Building the Docker image..."
       - docker build -t $REPOSITORY_URI:latest . # Build Docker image with the "latest" tag
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG # Tag the image with the specific build tag
+
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker images...
+      - echo "Build completed on `date`"
+      - echo "Pushing the Docker images..."
       - docker push $REPOSITORY_URI:latest # Push the "latest" tag to ECR
       - docker push $REPOSITORY_URI:$IMAGE_TAG # Push the build-specific tag to ECR
-      - echo Writing image definitions file...
-      - printf '[{"name":"course-service","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json # Write image definitions
-      - echo Writing image definitions file...
+      - echo "Writing image definitions file..."
       - DOCKER_CONTAINER_NAME=user-repo # Specify container name
       - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json # Write final image definitions
-      - echo $DOCKER_CONTAINER_NAME
-      - echo Printing imagedefinitions.json...
+      - echo "Printing imagedefinitions.json..."
       - cat imagedefinitions.json # Display the contents of the image definitions file
 
 artifacts:
