@@ -82,7 +82,6 @@ public class UserController {
 
     @GetMapping("/test")
     public String helathCheck(){
-
         return "successfull";
 
 
