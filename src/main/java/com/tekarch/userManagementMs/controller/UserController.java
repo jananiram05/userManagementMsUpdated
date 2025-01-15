@@ -79,5 +79,13 @@ public class UserController {
         logger.info("Received request to fetch accounts for user ID: {}", userId);
         return new ResponseEntity<>(userServiceImpl.getAccountByUserId(userId),HttpStatus.OK);
     }
+
+    @GetMapping("/test")
+    public String helathCheck(){
+        return "successfull";
+
+
+    }
+
 }
 
