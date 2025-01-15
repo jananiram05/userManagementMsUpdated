@@ -84,7 +84,6 @@ public class UserController {
     public String helathCheck(){
         return "successfull";
 
-
     }
 
 }
